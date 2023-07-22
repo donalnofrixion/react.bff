@@ -7,6 +7,7 @@ import {
   useAccounts,
 } from "@nofrixion/moneymoov";
 import { useCallback } from "react";
+import { defaultContext} from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
@@ -22,31 +23,27 @@ function Main() {
   const { isLoggedIn, username, logoutUrl, isLoading } = useAuthUser();
   const { data: merchants } = useMerchants(isLoggedIn ? true : false);
 
-  const onUnauthorized = useCallback(() => {
-    console.log("Not authorized to see transactions info");
-  }, []);
+  // let merchantId = merchants?.[0].id;
 
-  let merchantId = merchants?.[0].id;
-
-  const bankresponse = useBanks(
-    { merchantId: merchantId },
-    { apiUrl: "/api", authToken: "123", onUnauthorized: onUnauthorized }
-  );
+  const {data: banks, isLoading: isBanksLoading} = useBanks( {merchantId: merchants?.[0].id} , { apiUrl: "/api" });
 
   const {
     accounts,
     isLoading: isAccountsLoading,
     apiError,
-  } = useAccounts(
-    { merchantId: merchantId },
-    { apiUrl: "/api", authToken: "123", onUnauthorized: onUnauthorized }
-  );
+  } = useAccounts({ merchantId: merchants?.[0].id }, { apiUrl: "/api" });
 
-  console.log("isLoggedIn", isLoggedIn);
-  console.log("bankresponse", bankresponse);
+  // console.log("apiError", apiError);
+  console.log("bankresponse", banks);
+  // if (bankresponse && bankresponse.status === "error") {
+  //   console.log("bankresponse error", bankresponse.error);
+  // }
+  // else if (bankresponse){
+  //   console.log("bankresponse success", bankresponse.data);
+  // }
 
-  // if (!isAccountsLoading && accounts) {
-  console.log("accounts", accounts);
+  // // if (!isAccountsLoading && accounts) {
+  // console.log("accounts", accounts);
   // }
 
   if (isLoading)
@@ -103,7 +100,7 @@ function Main() {
         <>
           <ul className="py-10 space-y-2">
             {merchants &&
-              merchants.map((merchant) => (
+              merchants.map((merchant: any) => (
                 <li className="text-medium px-4 py-3 rounded-md border border-gray-20 shadow">
                   {merchant.name}
                 </li>
@@ -114,6 +111,14 @@ function Main() {
               accounts.map((account) => (
                 <li className="text-medium px-4 py-3 rounded-md border border-gray-20 shadow">
                   {account.accountName}
+                </li>
+              ))}
+          </ul>
+          <ul className="py-10 space-y-2">
+            {!isBanksLoading && banks && banks?.status == 'success' &&
+              banks?.data?.payByBankSettings.map((bank) => (
+                <li className="text-medium px-4 py-3 rounded-md border border-gray-20 shadow">
+                  {bank.bankName}
                 </li>
               ))}
           </ul>
