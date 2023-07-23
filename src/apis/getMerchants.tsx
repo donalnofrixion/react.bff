@@ -11,20 +11,20 @@ const config = {
   },
 };
 
-const fetchMerchants = async () =>
-  axios.get("/api/merchants", config).then((res) => res.data);
+// const fetchMerchants = async () =>
+//   axios.get("/api/merchants", config).then((res) => res.data);
 
-export const useMerchants = (isLoggedIn: boolean) => {
+// export const useMerchants = (isLoggedIn: boolean) => {
 
-  // if (!isLoggedIn) {
-  //   return {data: undefined};
-  // }
+//   // if (!isLoggedIn) {
+//   //   return {data: undefined};
+//   // }
 
-  return useQuery(claimsKeys.claim, async () => fetchMerchants(), {
-    staleTime: Infinity,
-    cacheTime: Infinity,
-  });
-}
+//   return useQuery(claimsKeys.claim, async () => fetchMerchants(), {
+//     staleTime: Infinity,
+//     cacheTime: Infinity,
+//   });
+// }
 
 // export { useMerchants as default };
 

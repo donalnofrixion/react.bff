@@ -6,7 +6,7 @@ settings:
 
 dependencies:
   '@nofrixion/moneymoov':
-    specifier: file:../nofrixion.clients
+    specifier: ^0.0.11
     version: link:../nofrixion.clients
   '@tanstack/react-query':
     specifier: ^4.3.2

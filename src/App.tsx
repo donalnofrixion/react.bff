@@ -1,13 +1,14 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAuthUser } from "./apis/auth";
-import { useMerchants } from "./apis/getMerchants";
+// import { useMerchants } from "./apis/getMerchants";
 import {
   usePaymentRequests,
   useBanks,
   useAccounts,
+  useMerchants
 } from "@nofrixion/moneymoov";
-import { useCallback } from "react";
-import { defaultContext} from "@tanstack/react-query";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
 
@@ -15,26 +16,28 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Main />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
 
 function Main() {
-  const { isLoggedIn, username, logoutUrl, isLoading } = useAuthUser();
-  const { data: merchants } = useMerchants(isLoggedIn ? true : false);
+  const { isLoggedIn, username, logoutUrl, isLoading, expiresIn } = useAuthUser();
+  const [merchantId, setMerchantId] = useState<string>();
+  
+  const { data: merchantResponse } = useMerchants({ apiUrl: "/api" });
+  const { data: banks, isLoading: isBanksLoading} = useBanks( {merchantId: merchantId} , { apiUrl: "/api" });
+  const { data: accounts } = useAccounts({ merchantId: merchantId }, { apiUrl: "/api" });
+  
+  useEffect(() => {
+    if (merchantResponse?.status == "success") {
+      setMerchantId(merchantResponse?.data?.[0].id);
+    }
+  }, [merchantResponse?.status]);
 
-  // let merchantId = merchants?.[0].id;
-
-  const {data: banks, isLoading: isBanksLoading} = useBanks( {merchantId: merchants?.[0].id} , { apiUrl: "/api" });
-
-  const {
-    accounts,
-    isLoading: isAccountsLoading,
-    apiError,
-  } = useAccounts({ merchantId: merchants?.[0].id }, { apiUrl: "/api" });
 
   // console.log("apiError", apiError);
-  console.log("bankresponse", banks);
+  // console.log("bankresponse", banks);
   // if (bankresponse && bankresponse.status === "error") {
   //   console.log("bankresponse error", bankresponse.error);
   // }
@@ -86,6 +89,7 @@ function Main() {
           <div className="flex items-center">
             <div className="ml-3">
               <p className="block text-base font-medium text-blue-500 md:text-sm">{`Hi, ${username}!`}</p>
+              <p className="block text-base font-medium text-blue-500 md:text-sm">{`Expires in ${expiresIn} seconds.`}</p>
               <a
                 href={logoutUrl?.value}
                 className="block mt-1 text-sm font-medium text-blue-200 hover:text-blue-500 md:text-xs"
@@ -99,16 +103,16 @@ function Main() {
       {
         <>
           <ul className="py-10 space-y-2">
-            {merchants &&
-              merchants.map((merchant: any) => (
+            {merchantResponse && merchantResponse?.status == 'success' &&
+              merchantResponse.data.map((merchant: any) => (
                 <li className="text-medium px-4 py-3 rounded-md border border-gray-20 shadow">
                   {merchant.name}
                 </li>
               ))}
           </ul>
           <ul className="py-10 space-y-2">
-            {accounts &&
-              accounts.map((account) => (
+            {accounts && accounts?.status == 'success' &&
+              accounts.data.map((account) => (
                 <li className="text-medium px-4 py-3 rounded-md border border-gray-20 shadow">
                   {account.accountName}
                 </li>

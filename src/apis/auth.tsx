@@ -38,23 +38,20 @@ function useAuthUser() {
     claims?.find((claim: any) => claim.type === "name") ||
     claims?.find((claim: any) => claim.type === "sub");
   let username = nameDict?.value;
-
-  console.log('UserName', username);
+  let expiresIn = claims?.find((claim: any) => claim.type === "bff:session_expires_in")?.value;
+  
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     setIsLoggedIn(!!username);
   }, [username]);
 
-  useEffect(() => {
-    console.log('USER IS LOGGED IN = ', isLoggedIn);
-  }, [isLoggedIn]);
-
   return {
     username,
     logoutUrl,
     isLoading,
     isLoggedIn,
+    expiresIn
   };
 }
 

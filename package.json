@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@nofrixion/moneymoov": "file:../nofrixion.clients",
+    "@nofrixion/moneymoov": "^0.0.11",
     "@tanstack/react-query": "^4.3.2",
     "@tanstack/react-query-devtools": "^4.3.2",
     "axios": "^1.4.0",
