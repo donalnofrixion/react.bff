@@ -102,6 +102,7 @@ function Main() {
       )}
       {
         <>
+        <button onClick={() => setMerchantId(merchantResponse?.data?.[1].id)}>Change merchant</button>
           <ul className="py-10 space-y-2">
             {merchantResponse && merchantResponse?.status == 'success' &&
               merchantResponse.data.map((merchant: any) => (
