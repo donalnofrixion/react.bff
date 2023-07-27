@@ -12,19 +12,19 @@ export default defineConfig({
     // these are the proxy routes that will be forwarded to your **BFF**
     proxy: {
       "/bff": {
-        target: "https://localhost:7105",
+        target: "https://localhost:7106",
         secure: false,
       },
       "/signin-oidc": {
-        target: "https://localhost:7105",
+        target: "https://localhost:7106",
         secure: false,
       },
       "/signout-callback-oidc": {
-        target: "https://localhost:7105",
+        target: "https://localhost:7106",
         secure: false,
       },
       "/api": {
-        target: "https://localhost:7105",
+        target: "https://localhost:7106",
         secure: false,
       },
     },
